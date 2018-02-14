@@ -1,0 +1,51 @@
+
+#include <cstdlib>
+#include <math.h>
+#include <iostream>
+#include <string>
+#include <string.h>
+#include<stdlib.h>
+#include<vector>
+#include<set>
+#include<map>
+#include<exception>
+#include<algorithm>
+#include<fstream>
+#include<stdio.h>
+#include<unordered_set>
+
+using namespace std;
+
+int main(int argc, char** argv) {
+    FILE* fd = fopen("/home/pengyuan/Downloads/Algorithm/algo1-programming_prob-2sum.txt", "r");
+    char tmpInt[1024];
+    unordered_set<long > pool;
+    pool.rehash(5000000);
+    vector<long> nums;
+    nums.reserve(1000000);
+    unsigned count=0;
+    char delem[]="\n";
+    while(fgets(tmpInt, 1024, fd)){
+	char* tok;
+	tok=strtok(tmpInt, delem);
+	long num = atol(tok);
+	nums.push_back(num);
+	pool.insert(num);
+    }
+#pragma omp parallel for
+    for(int i=0;i<nums.size();i++){
+	long num = nums[i];
+	long p1 = -10000-num;
+	long p2 = 10000-num;
+	for(int j=p1;j<=p2;j++){
+	    if(j==num)
+		continue;
+	    if(pool.find( j )!=pool.end())
+		count++;
+	}
+	if(i%1000==0)
+	    cout<< "Current num: "<<i<<", count number: "<< count<<endl;
+    }
+    cout<< "The count number: "<<count<<endl;
+    return 0;
+}
